@@ -11,23 +11,25 @@ import javax.ws.rs.client.WebTarget;
 public class PathParamProcessor implements WebTargetProcessor
 {
    private final String paramName;
-   private final Boolean encodeSlashInPath;
+   private final boolean isEncoded;
 
    public PathParamProcessor(String paramName)
    {
       this.paramName = paramName;
-      this.encodeSlashInPath = true;
+      this.isEncoded = true;
    }
 
-   public PathParamProcessor(String paramName, Boolean encodeSlashInPath)
+   public PathParamProcessor(String paramName, boolean isEncoded)
    {
       this.paramName = paramName;
-      this.encodeSlashInPath = encodeSlashInPath;
+      this.isEncoded = isEncoded;
    }
 
    @Override
    public WebTarget build(WebTarget target, Object param)
    {
-      return target.resolveTemplate(paramName, param, encodeSlashInPath);
+      return isEncoded
+         ? target.resolveTemplateFromEncoded(paramName, param)
+         : target.resolveTemplate(paramName, param, false);
    }
 }
